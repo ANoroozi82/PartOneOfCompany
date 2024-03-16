@@ -30,7 +30,28 @@ async function run(req, res) {
     //     console.log(isValid);
     //     console.log(validate.errors)
     // })
+    const ans = parseCookies(req);
 
+    res.setHeader('Set-Cookie', 'myCookie=Hiiiiiiii');
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Cookie set successfully!');
+
+}
+
+function parseCookies(req) {
+    const cookieHeader = req.headers.cookie;
+
+    if (cookieHeader) {
+        return cookieHeader
+            .split(';')
+            .map(cookie => cookie.split('='))
+            .reduce((cookies, [key, value]) => {
+                cookies[key.trim()] = decodeURIComponent(value);
+                return cookies;
+            }, {});
+    }
+
+    return {};
 }
 
 const server = http.createServer(run);
